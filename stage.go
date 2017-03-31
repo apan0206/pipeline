@@ -41,8 +41,10 @@ func (st *Stage) AddStep(step ...interface{}) {
 		switch stepType := item.(type) {
 		case func(request *Request) *Result:
 			 st.Steps = append(st.Steps, HandleStepExec(stepType))
-		default:
+		case Step:
 			st.Steps = append(st.Steps, stepType.(Step))
+		default:
+			fmt.Println("addStep error")
 		}
 	}
 	// st.Steps = append(st.Steps, step...)
