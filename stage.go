@@ -30,8 +30,22 @@ func NewStage(name string, concurrent bool, disableStrictMode bool) *Stage {
 }
 
 // AddStep adds a new step to the stage
-func (st *Stage) AddStep(step ...Step) {
-	st.Steps = append(st.Steps, step...)
+//func (st *Stage) AddStep(step ...Step) {
+//	st.Steps = append(st.Steps, step...)
+//}
+
+// AddStep adds a new step to the stage
+func (st *Stage) AddStep(step ...interface{}) {
+	for i := 0; i < len(step); i++ {
+		item := step[i]
+		switch stepType := item.(type) {
+		case func(request *Request) *Result:
+			 st.Steps = append(st.Steps, HandleStepExec(stepType))
+		default:
+			st.Steps = append(st.Steps, stepType.(Step))
+		}
+	}
+	// st.Steps = append(st.Steps, step...)
 }
 
 // Run the stage execution sequentially

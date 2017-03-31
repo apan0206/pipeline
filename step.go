@@ -63,3 +63,27 @@ func (sc *StepContext) Status(line string) {
 	line = blue(stepText) + "[" + sc.getCtx().name + "]: " + line
 	send(sc.getCtx().pipelineKey, line)
 }
+
+
+/// func
+type HandleStepExec func(request *Request) *Result
+
+func (h HandleStepExec) Exec(request *Request) *Result {
+	return h(request)
+}
+
+func (w HandleStepExec) Cancel() error {
+	w.Status("cancel step")
+	return nil
+}
+
+func (h HandleStepExec) Status(line string) {
+	fmt.Println("into custom status", line)
+}
+
+func (h HandleStepExec) getCtx() *stepContextVal {
+	return nil
+}
+
+func (h HandleStepExec) setCtx(*stepContextVal) {
+}
